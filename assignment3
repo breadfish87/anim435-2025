@@ -1,0 +1,42 @@
+import os
+import maya.standalone
+maya.standalone.initialize()
+import maya.cmds as cmds
+import random as rand
+
+relative_path = os.getcwd() # takes the current directory path
+
+def create_file_path(): #chatgpt was used to create to help get the file path here
+    
+    if not os.path.exists(os.path.join(relative_path, "workspace.mel")): # os.path.join is from chatgpt, not my own work # checks if the file path exists to a workspace
+        cmds.workspace(relative_path, newWorkspace=True) # creates new workspace if one doesn't exist
+    cmds.workspace(relative_path, openWorkspace=True)
+
+    file_name = os.path.join(relative_path, "rpy26-ANIM435-2025-assignment04-HW_file.ma") # os.path.join is from chatgpt, not my own work
+
+    cmds.file(rename=file_name)
+
+    create_spheres_and_rename()
+
+
+def create_spheres_and_rename(): # creates a random amount of spheres, from 5-20, and scatters them into a maya scene
+    spheres_total = []
+    for i in range(rand.randint(5,20)):
+        sphere = cmds.polySphere()[0] # creates spheres
+        spheres_total.append(sphere) # addes sphere to list
+
+    for i in range(len(spheres_total)): # for loop, for each sphere
+        cmds.rename(spheres_total[i], f"scene_object_{i}") # renames spheres
+
+        x = rand.randint(-10,10) # gets random units for scatter
+        y = rand.randint(-10,10)
+        z = rand.randint(-10,10)
+        
+        cmds.setAttr(f"scene_object_{i}" +".translateX", x) # sets translation attributes to random numbers
+        cmds.setAttr(f"scene_object_{i}" +".translateY", y)
+        cmds.setAttr(f"scene_object_{i}" +".translateZ", z)
+
+    cmds.file(save=True, type="mayaAscii")
+
+create_file_path()
+maya.standalone.uninitialize() # stops running standalone, read that it was a good practice, let me know if I'm wrong
